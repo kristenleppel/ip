@@ -10,8 +10,9 @@ app = Flask(__name__)
 
 @app.route("/")
 def main():
-    header = request.headers.get('cf-connecting-ip')
-    url = f"http://ip-api.com/json/{header}?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query"
+    headers_list = request.headers.getlist("X-Forwarded-For")
+    user_ip = headers_list[0] if headers_list else request.remote_addr
+    url = f"http://ip-api.com/json/{user_ip}?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query"
     response = requests.get(url)
     info = response.json()
     
